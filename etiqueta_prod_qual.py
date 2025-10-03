@@ -2,7 +2,7 @@ import win32print
 import win32ui
 # para converter a logo: curl --request POST http://api.labelary.com/v1/graphics --form file=@logo.png > logo.zpl
 
-printer_name = "ZDesigner ZD220-203dpi ZPL"  # Use o nome exato da sua impressora
+printer_name = "ZDesigner ZD220-203dpi ZPL"
 
 logo_gfa = open('logo.zpl').read().strip()
 logo_gfa_block = logo_gfa.replace("^FO0,0", "", 1)
