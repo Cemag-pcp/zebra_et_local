@@ -5,10 +5,11 @@ import pandas as pd
 import os
 import win32print
 import time
+import pywintypes
 
 # ============== ENVIO RAW (USB/Windows) ==============
 def send_raw_windows(zpl: str, printer_name: str) -> int:
-    data = zpl.encode("cp437", errors="replace")
+    data = zpl.encode("utf-8", errors="replace")
     h = win32print.OpenPrinter(printer_name)
     try:
         win32print.StartDocPrinter(h, 1, ("RAW ZPL", None, "RAW"))
@@ -26,30 +27,23 @@ def send_raw_windows(zpl: str, printer_name: str) -> int:
 #   apenas removendo a 1ª ocorrência de "^FO0,0" (igual seu script).
 # - Modelos que não usam logo podem ignorar logo_gfa_block.
 
-def zpl_evandro():
+def zpl_evandro(codigo: str, descricao: str) -> str:
     # Layout baseado no seu main_evandro.py (simplificado)
     return f"""^XA
+
 ^CI28
 ^PW800
 ^LL320
 ^LT0
 ^LH0,0
+^FO250,1^GFA,3800,3800,38,,::::::::::iP01F8,iP03FE,iP0607,iP0C03,iO018F18,iO01898C,iO018B0C,iO018F0C,iO018B0C,L03IFL03IF8N03FFI03FFCN03IFQ07FFEI01I9C,K03KFJ01KFM01IFE00JF8L03KFO07JFEI0C998,K0LFCI07KFEL07JF83JFEL0LFCM01LF800E03,J03MF003MF8J01KFC7KFK03MFM07LFE0070E,J0NFC07MFCJ03RF8J0NFCK01NF801FC,I01NFE1OFJ07RFCI01NFEK03NFC,I03OF3OF8I0SFEI03OF8J07NFE,I0OFE7OFC001TFI07OFCJ0PF8,001OFCPFE003TF800PFEI01PFC,001OF9QF003TF801QFI07PFE,003JF807FF3JFE07JF807IF8KFC3IFC03JFC07JFI07JF00JFE,007IFCI0FE7IFEI0JFC07FFE01JF00IFC07IFCI0JF800JF8001JF,00JFJ03C7IF8I03IFC0IF800IFE007FFC0JFJ03IFC01IFEJ07IF8,00IFCK08IFEK0IFE0IF8007FFC003FFE0IFCK0IFE01IF8J01IF8,01IF8L0IFCK07IF0IFI07FFC001FFE1IF8K07FFE03IFL0IFC,01IFL01IF8K03IF0IFI03FFC001FFE1IFL03IF03FFEL07FFC,03FFEL01IFL01IF8IFI03FFC001FFE3FFEL01IF07FFCL03FFE,03FFEL03FFEM0IF8IFI03FFC001FFE3FFEM0IF07FFCL01FFE,03FFCL03FFEM07FF8IFI03FFC001FFE7FFCM0IF8IF8L01IF,07FF8L03FFCM07FF8IFI03FFC001FFE7FF8M07FF8IFN0IF,07FF8L07SFCIFI03FFC001FFE7FF8M07FF8IFN0IF,07FF8L07SFCIFI03FFC001FFE7FF8M03FF8IFN07FF,07FFM07SFCIFI03FFC001FFE7FFN03FFCFFEN07FF8,:07FFM07SFCIFI03FFC001FFEIFN03FFDFFEN07FF8,:0IFM07SFCIFI03FFC001FFEIFN03FFDFFEN07FF8,07FFM07SFCIFI03FFC001FFE7FFN03FFCFFEN07FF8,:07FFM07SFCIFI03FFC001FFE7FF8M03FFCIFN07FF8,07FF8L07SFCIFI03FFC001FFE7FF8M07FFCIFN0IF8,07FF8L07FFCQ0IFI03FFC001FFE7FF8M07FFCIFN0IF8,07FFCL03FFCQ0IFI03FFC001FFE7FFCM0IFCIF8L01IF8,03FFCL03FFEQ0IFI03FFC001FFE3FFCM0IFC7FF8L01IF8,03FFEL03IFQ0IFI03FFC001FFE3FFEL01IFC7FFCL03IF8,01IFL01IF8P0IFI03FFC001FFE3IFL03IFC3FFEL07IF8,01IF8K01IFCP0IFI03FFC001FFE1IF8K07IFC3IFL0JF8,00IFCK08IFEK0EJ0IFI03FFC001FFE0IFCK0JFC1IF8J01JF8,00JFJ03CJFJ01F8I0IFI03FFC001FFE0JFJ03JFC1IFEJ07JF8,007IFCI07E7IFCI07FCI0IFI03FFC001FFE07IFCI07JFC0JF8I0KF8,003JF803FF3JFC03FFEI0IFI03FFC001FFE03JF003KFC07IFE007KF8,003OF9PFI0IFI03FFC001FFE03RFC07RF8,001OFCPF800IFI03FFC001FFE01RFC03RF8,I0OFE7OFC00IFI03FFC001FFE00RFC01RF8,I07OF3OF800IFI03FFC001FFE007QFC00RF8,I01NFE1OFI0IFI03FFC001FFE001QFC003QF8,J0NFC0NFEI0IFI03FFC001FFEI0QFC001QF8,J03MF003MF8I0IFI03FFC001FFEI03MF3FFCI07LFE7FF8,K0LFEI0LFEJ0IFI03FFC001FFEJ0LFE3FFCI01LFC7FF8,K03KFJ03KF8J0IFI03FFC001FFEJ03KF03FFCJ07JFE07FF8,L07IF8K07IFCK0IFI03FFC001FFEK07IF803FFCK0JF007FF,N02N02EM0402I01018I080CL033I01008L02J0IF,iN0IF,:iM01IF,hY01CL03FFE,hY07EL07FFE,hX01FFL07FFC,hX07FF8J01IFC,hX0IFCJ03IF8,hX0JFJ0JF8,hX0JFE003JF,hX07PFE,hX03PFC,hX01PF8,hY0PF,hY07NFE,hY01NF8,i0NF,i03LFC,iG0LF,iG01JF8,iH03FFC,,::::::^FS
 
-^FX Texto
-^FO240,60
-^A0N,35,35
-^FB400,10,10,L,2
-^FDProduto: Antirespingo de Solda Líquido Spatter Off^FS
 
-^FO240,200
-^A0N,35,35
-^FB400,10,10,L,0
-^FDCodigo: 350023^FS
-
-^FO240,260
-^A0N,35,35
-^FB400,10,10,L,0
-^FDConteúdo: 20L^FS
+^FX Código da peça e descrição
+^FO180,150
+^A0N,40,40
+^FB500,3,0,L,0
+^FD{codigo} - {descricao}^FS
 
 ^XZ
 """
@@ -128,18 +122,19 @@ def zpl_massari_setor(filename: str, url: str, setor: str) -> str:
 ^FX Logo
 ^FO220,20
 ^GFA,3800,3800,38,,::::::::::iP01F8,iP03FE,iP0607,iP0C03,iO018F18,iO01898C,iO018B0C,iO018F0C,iO018B0C,L03IFL03IF8N03FFI03FFCN03IFQ07FFEI01I9C,K03KFJ01KFM01IFE00JF8L03KFO07JFEI0C998,K0LFCI07KFEL07JF83JFEL0LFCM01LF800E03,J03MF003MF8J01KFC7KFK03MFM07LFE0070E,J0NFC07MFCJ03RF8J0NFCK01NF801FC,I01NFE1OFJ07RFCI01NFEK03NFC,I03OF3OF8I0SFEI03OF8J07NFE,I0OFE7OFC001TFI07OFCJ0PF8,001OFCPFE003TF800PFEI01PFC,001OF9QF003TF801QFI07PFE,003JF807FF3JFE07JF807IF8KFC3IFC03JFC07JFI07JF00JFE,007IFCI0FE7IFEI0JFC07FFE01JF00IFC07IFCI0JF800JF8001JF,00JFJ03C7IF8I03IFC0IF800IFE007FFC0JFJ03IFC01IFEJ07IF8,00IFCK08IFEK0IFE0IF8007FFC003FFE0IFCK0IFE01IF8J01IF8,01IF8L0IFCK07IF0IFI07FFC001FFE1IF8K07FFE03IFL0IFC,01IFL01IF8K03IF0IFI03FFC001FFE1IFL03IF03FFEL07FFC,03FFEL01IFL01IF8IFI03FFC001FFE3FFEL01IF07FFCL03FFE,03FFEL03FFEM0IF8IFI03FFC001FFE3FFEM0IF07FFCL01FFE,03FFCL03FFEM07FF8IFI03FFC001FFE7FFCM0IF8IF8L01IF,07FF8L03FFCM07FF8IFI03FFC001FFE7FF8M07FF8IFN0IF,07FF8L07SFCIFI03FFC001FFE7FF8M07FF8IFN0IF,07FF8L07SFCIFI03FFC001FFE7FF8M03FF8IFN07FF,07FFM07SFCIFI03FFC001FFE7FFN03FFCFFEN07FF8,:07FFM07SFCIFI03FFC001FFEIFN03FFDFFEN07FF8,:0IFM07SFCIFI03FFC001FFEIFN03FFDFFEN07FF8,07FFM07SFCIFI03FFC001FFE7FFN03FFCFFEN07FF8,:07FFM07SFCIFI03FFC001FFE7FF8M03FFCIFN07FF8,07FF8L07SFCIFI03FFC001FFE7FF8M07FFCIFN0IF8,07FF8L07FFCQ0IFI03FFC001FFE7FF8M07FFCIFN0IF8,07FFCL03FFCQ0IFI03FFC001FFE7FFCM0IFCIF8L01IF8,03FFCL03FFEQ0IFI03FFC001FFE3FFCM0IFC7FF8L01IF8,03FFEL03IFQ0IFI03FFC001FFE3FFEL01IFC7FFCL03IF8,01IFL01IF8P0IFI03FFC001FFE3IFL03IFC3FFEL07IF8,01IF8K01IFCP0IFI03FFC001FFE1IF8K07IFC3IFL0JF8,00IFCK08IFEK0EJ0IFI03FFC001FFE0IFCK0JFC1IF8J01JF8,00JFJ03CJFJ01F8I0IFI03FFC001FFE0JFJ03JFC1IFEJ07JF8,007IFCI07E7IFCI07FCI0IFI03FFC001FFE07IFCI07JFC0JF8I0KF8,003JF803FF3JFC03FFEI0IFI03FFC001FFE03JF003KFC07IFE007KF8,003OF9PFI0IFI03FFC001FFE03RFC07RF8,001OFCPF800IFI03FFC001FFE01RFC03RF8,I0OFE7OFC00IFI03FFC001FFE00RFC01RF8,I07OF3OF800IFI03FFC001FFE007QFC00RF8,I01NFE1OFI0IFI03FFC001FFE001QFC003QF8,J0NFC0NFEI0IFI03FFC001FFEI0QFC001QF8,J03MF003MF8I0IFI03FFC001FFEI03MF3FFCI07LFE7FF8,K0LFEI0LFEJ0IFI03FFC001FFEJ0LFE3FFCI01LFC7FF8,K03KFJ03KF8J0IFI03FFC001FFEJ03KF03FFCJ07JFE07FF8,L07IF8K07IFCK0IFI03FFC001FFEK07IF803FFCK0JF007FF,N02N02EM0402I01018I080CL033I01008L02J0IF,iN0IF,:iM01IF,hY01CL03FFE,hY07EL07FFE,hX01FFL07FFC,hX07FF8J01IFC,hX0IFCJ03IF8,hX0JFJ0JF8,hX0JFE003JF,hX07PFE,hX03PFC,hX01PF8,hY0PF,hY07NFE,hY01NF8,i0NF,i03LFC,iG0LF,iG01JF8,iH03FFC,,::::::^FS
+^CWZ,E:ARIAL.TTF                ; mapeia a letra Z para a ARIAL (já copiada pra E:)
 
 ^FX Texto (nome)
 ^FO50,140
 ^A0N,30,30
 ^FB400,10,10,L,0
-^FD{filename}^FS
+^FD^FD{filename}^FS
 
 ^FX SETOR
 ^FO200,250
 ^A0N,30,30
 ^FB400,1,10,C,0
-^FD{setor}^FS
+^FD^FD{setor}^FS
 
 ^FX QR
 ^FO550,80
@@ -233,9 +228,9 @@ def zpl_pernambuco_cliente() -> str:
 ^LH0,0
 
 ^FX Código da peça e descrição
-^FO180,90^A0N,50,50^FDFORNECEDORA^FS
+^FO180,90^A0N,50,50^FDCasa do PicaPau^FS
 
-^FO180,190^A0N,50,50^FDMOSSORO-RN^FS
+^FO180,190^A0N,50,50^FDItaberai-GO^FS
 
 ^XZ
 """
@@ -258,6 +253,156 @@ def zpl_matheus() -> str:
 def zpl_teste_minimo() -> str:
     # ZPL mínimo p/ diagnosticar caminho spooler→Zebra
     return "^XA^FO50,50^ADN,36,20^FDTESTE ZPL OK^FS^XZ"
+
+def zpl_evandro_almox_qualidade(codigo: str, descricao: str) -> str:
+    # Layout baseado no seu main_evandro.py (simplificado)
+    return f"""^XA
+^CI28
+^PW800
+^LL320
+^LT0
+^LH0,0
+
+^FX Logo centralizado
+^FO250,8^GFA,3800,3800,38,,::::::::::iP01F8,iP03FE,iP0607,iP0C03,iO018F18,iO01898C,iO018B0C,iO018F0C,iO018B0C,L03IFL03IF8N03FFI03FFCN03IFQ07FFEI01I9C,K03KFJ01KFM01IFE00JF8L03KFO07JFEI0C998,K0LFCI07KFEL07JF83JFEL0LFCM01LF800E03,J03MF003MF8J01KFC7KFK03MFM07LFE0070E,J0NFC07MFCJ03RF8J0NFCK01NF801FC,I01NFE1OFJ07RFCI01NFEK03NFC,I03OF3OF8I0SFEI03OF8J07NFE,I0OFE7OFC001TFI07OFCJ0PF8,001OFCPFE003TF800PFEI01PFC,001OF9QF003TF801QFI07PFE,003JF807FF3JFE07JF807IF8KFC3IFC03JFC07JFI07JF00JFE,007IFCI0FE7IFEI0JFC07FFE01JF00IFC07IFCI0JF800JF8001JF,00JFJ03C7IF8I03IFC0IF800IFE007FFC0JFJ03IFC01IFEJ07IF8,00IFCK08IFEK0IFE0IF8007FFC003FFE0IFCK0IFE01IF8J01IF8,01IF8L0IFCK07IF0IFI07FFC001FFE1IF8K07FFE03IFL0IFC,01IFL01IF8K03IF0IFI03FFC001FFE1IFL03IF03FFEL07FFC,03FFEL01IFL01IF8IFI03FFC001FFE3FFEL01IF07FFCL03FFE,03FFEL03FFEM0IF8IFI03FFC001FFE3FFEM0IF07FFCL01FFE,03FFCL03FFEM07FF8IFI03FFC001FFE7FFCM0IF8IF8L01IF,07FF8L03FFCM07FF8IFI03FFC001FFE7FF8M07FF8IFN0IF,07FF8L07SFCIFI03FFC001FFE7FF8M07FF8IFN0IF,07FF8L07SFCIFI03FFC001FFE7FF8M03FF8IFN07FF,07FFM07SFCIFI03FFC001FFE7FFN03FFCFFEN07FF8,:07FFM07SFCIFI03FFC001FFEIFN03FFDFFEN07FF8,:0IFM07SFCIFI03FFC001FFEIFN03FFDFFEN07FF8,07FFM07SFCIFI03FFC001FFE7FFN03FFCFFEN07FF8,:07FFM07SFCIFI03FFC001FFE7FF8M03FFCIFN07FF8,07FF8L07SFCIFI03FFC001FFE7FF8M07FFCIFN0IF8,07FF8L07FFCQ0IFI03FFC001FFE7FF8M07FFCIFN0IF8,07FFCL03FFCQ0IFI03FFC001FFE7FFCM0IFCIF8L01IF8,03FFCL03FFEQ0IFI03FFC001FFE3FFCM0IFC7FF8L01IF8,03FFEL03IFQ0IFI03FFC001FFE3FFEL01IFC7FFCL03IF8,01IFL01IF8P0IFI03FFC001FFE3IFL03IFC3FFEL07IF8,01IF8K01IFCP0IFI03FFC001FFE1IF8K07IFC3IFL0JF8,00IFCK08IFEK0EJ0IFI03FFC001FFE0IFCK0JFC1IF8J01JF8,00JFJ03CJFJ01F8I0IFI03FFC001FFE0JFJ03JFC1IFEJ07JF8,007IFCI07E7IFCI07FCI0IFI03FFC001FFE07IFCI07JFC0JF8I0KF8,003JF803FF3JFC03FFEI0IFI03FFC001FFE03JF003KFC07IFE007KF8,003OF9PFI0IFI03FFC001FFE03RFC07RF8,001OFCPF800IFI03FFC001FFE01RFC03RF8,I0OFE7OFC00IFI03FFC001FFE00RFC01RF8,I07OF3OF800IFI03FFC001FFE007QFC00RF8,I01NFE1OFI0IFI03FFC001FFE001QFC003QF8,J0NFC0NFEI0IFI03FFC001FFEI0QFC001QF8,J03MF003MF8I0IFI03FFC001FFEI03MF3FFCI07LFE7FF8,K0LFEI0LFEJ0IFI03FFC001FFEJ0LFE3FFCI01LFC7FF8,K03KFJ03KF8J0IFI03FFC001FFEJ03KF03FFCJ07JFE07FF8,L07IF8K07IFCK0IFI03FFC001FFEK07IF803FFCK0JF007FF,N02N02EM0402I01018I080CL033I01008L02J0IF,iN0IF,:iM01IF,hY01CL03FFE,hY07EL07FFE,hX01FFL07FFC,hX07FF8J01IFC,hX0IFCJ03IF8,hX0JFJ0JF8,hX0JFE003JF,hX07PFE,hX03PFC,hX01PF8,hY0PF,hY07NFE,hY01NF8,i0NF,i03LFC,iG0LF,iG01JF8,iH03FFC,,::::::^FS
+
+^FX Código da peça e descrição
+^FO50,100^A0N,28,28^FDCódigo: {codigo} - {descricao}^FS
+
+^FX Linha divisória vertical
+^FO400,140^GB2,200,2^FS    ; linha de 2 dots de largura, 200 dots de altura
+
+^FX Coluna PCP (esquerda)
+^FO50,140^A0N,36,36^FB350,1,0,C,0^FDALMOXARIFADO^FS
+^FO60,210^A0N,30,30^FDNF:_____   QTD:___^FS
+^FO60,250^A0N,30,30^FDData (Receb.): ___/___/___^FS
+^FO60,290^A0N,30,30^FDInspeção:^FS
+^FO180,290^A0N,30,30^FDSim^FS
+^FO230,293^GB20,20,2^FS       ; caixa de 20×20 dots vazia
+^FO260,291^A0N,30,30^FDNão^FS
+^FO310,293^GB20,20,2^FS       ; caixa de 20×20 dots vazia
+
+^FX Coluna Qualidade (direita)
+^FO420,140^A0N,36,36^FB330,1,0,C,0^FDQualidade^FS
+^FO430,200^A0N,30,30^FDAprovado:^FS
+^FO560,200^A0N,30,30^FDSim^FS
+^FO610,200^GB20,20,2^FS       ; caixa de 20×20 dots vazia
+^FO650,200^A0N,30,30^FDNão^FS
+^FO700,200^GB20,20,2^FS       ; caixa de 20×20 dots vazia
+^FO430,250^A0N,30,30^FDData: ___/___/___^FS
+^FO430,290^A0N,30,30^FDInspetor: _____________^FS
+
+^XZ
+
+"""
+
+def zpl_calibracao(items: list) -> str:
+    final_zpl = ""
+    offsets = [60, 320, 570]
+    
+    for i in range(0, len(items), 3):
+        batch = items[i:i+3]
+        final_zpl += "^XA\n^PW850\n^LL160\n^MD15\n^PR4\n"
+        
+        for idx, item in enumerate(batch):
+            x = offsets[idx]
+            
+            # Converte Series em dict, se necessário
+            if not isinstance(item, dict):
+                item = item.to_dict() if hasattr(item, "to_dict") else {}
+            
+            rq = str(item.get("rq", ""))
+            tag = str(item.get("tag", ""))
+            data = str(item.get("data", ""))
+            
+            final_zpl += f"^FO{x},20^A0N,25,25^FD{rq}^FS\n"
+            final_zpl += f"^FO{x},55^A0N,25,25^FD{tag}^FS\n"
+            final_zpl += f"^FO{x},90^A0N,25,25^FD{data}^FS\n"
+        
+        final_zpl += "^XZ\n"
+        
+
+        print(final_zpl)
+
+    return final_zpl
+
+# ============== REGISTRO DE MODELOS ==============
+# Para adicionar um novo modelo de etiqueta:
+#   1) Crie uma função zpl_* que retorne o ZPL.
+#   2) Adicione uma entrada em MODEL_CONFIGS abaixo, informando se usa CSV
+#      e quais colunas mínimas o CSV precisa ter.
+# A tela usa sempre essas configurações, evitando vários if/elif espalhados.
+
+MODEL_CONFIGS = {
+    "Evandro -> filename | url": {
+        "requires_csv": True,
+        "required_csv_columns": {"filename", "url"},
+        "builder": lambda row: zpl_evandro(
+            str(row.get("codigo", "")) if row is not None else "",
+            str(row.get("descricao", "")) if row is not None else "",
+        ),
+    },
+    "Laura -> filename | url": {
+        "requires_csv": True,
+        "required_csv_columns": {"filename", "url"},
+        "builder": lambda row: zpl_laura(
+            str(row.get("filename", "")) if row is not None else "",
+            str(row.get("url", "")) if row is not None else "",
+        ),
+    },
+    "Massari -> filename | url": {
+        "requires_csv": True,
+        "required_csv_columns": {"filename", "url"},
+        "builder": lambda row: zpl_massari_simples(
+            str(row.get("filename", "")) if row is not None else "",
+            str(row.get("url", "")) if row is not None else "",
+        ),
+    },
+    "Massari - qrcode -> filename | url | setor": {
+        "requires_csv": True,
+        "required_csv_columns": {"filename", "url", "setor"},
+        "builder": lambda row: zpl_massari_setor(
+            str(row.get("filename", "")) if row is not None else "",
+            str(row.get("url", "")) if row is not None else "",
+            str(row.get("setor", "")) if row is not None else "",
+        ),
+    },
+    "Severiano - Aprovado (Fixa - sem CSV)": {
+        "requires_csv": False,
+        "required_csv_columns": set(),
+        "builder": lambda row=None: zpl_severiano_aprovado(),
+    },
+    "Exportacao - Pernambuco (Fixa - sem CSV)": {
+        "requires_csv": False,
+        "required_csv_columns": set(),
+        "builder": lambda row=None: zpl_pernambuco_exportacao(),
+    },
+    "Cliente - Pernambuco (Fixa - sem CSV)": {
+        "requires_csv": False,
+        "required_csv_columns": set(),
+        "builder": lambda row=None: zpl_pernambuco_cliente(),
+    },
+    "Matheus (Fixa - sem CSV)": {
+        "requires_csv": False,
+        "required_csv_columns": set(),
+        "builder": lambda row=None: zpl_matheus(),
+    },
+    "Evandro - almox<>qualidade -> codigo | descricao": {
+        "requires_csv": True,
+        "required_csv_columns": {"codigo", "descricao"},
+        "builder": lambda row: zpl_evandro_almox_qualidade(
+            str(row.get("codigo", "")) if row is not None else "",
+            str(row.get("descricao", "")) if row is not None else "",
+        ),
+    },
+    "Calibracao teste -> rq | tag | data": {
+        "requires_csv": True,
+        "required_csv_columns": {"rq", "tag", "data"},
+        # O builder agora espera receber uma lista de linhas ('rows')
+        # e passa essa lista diretamente para a função zpl_calibracao
+        "builder": zpl_calibracao,
+    }
+}
 
 # ============== APP TKINTER ==============
 class UnifiedUSBApp(tk.Tk):
@@ -350,7 +495,7 @@ class UnifiedUSBApp(tk.Tk):
 
     def _on_model_change(self, *a):
         model = self.model_var.get()
-        if model.startswith("Severiano") or model.startswith("Evandro") or model.startswith("Exportação") or model.startswith("Cliente") or model.startswith("Matheus"):
+        if model.startswith("Severiano") or model.startswith("Exportação") or model.startswith("Cliente") or model.startswith("Matheus"):
             self.mode_requires_csv = False
             self.csv_hint.config(text="Modelo FIXO. Não requer CSV. Quantidade = total.")
         elif "Setor" in model:
@@ -417,7 +562,7 @@ class UnifiedUSBApp(tk.Tk):
         try:
             n = send_raw_windows(zpl, printer)
             self._log(f"[TESTE] Enviado {n} bytes para: {printer}")
-        except win32print.error as e:
+        except pywintypes.error as e:
             self._log(f"[ERRO TESTE] win32: {e}")
             messagebox.showerror("Erro", f"Erro do Windows ao imprimir:\n{e}")
         except Exception as e:
@@ -474,8 +619,6 @@ class UnifiedUSBApp(tk.Tk):
                     # Apenas modelos realmente "fixos" entram aqui
                     if model.startswith("Severiano"):
                         zpl = zpl_severiano_aprovado()
-                    elif model.startswith("Evandro"):
-                        zpl = zpl_evandro()
                     elif model.startswith("Exportação"):
                         zpl = zpl_pernambuco_exportacao()
                     elif model.startswith("Cliente"):
@@ -508,6 +651,8 @@ class UnifiedUSBApp(tk.Tk):
                 filename = str(row.get("filename", ""))
                 url     = str(row.get("url", ""))
                 setor   = str(row.get("setor", ""))
+                codigo = str(row.get("codigo", ""))
+                descricao = str(row.get("descricao",""))
 
                 for _ in range(qtd):
                     if self.stop_event.is_set():
@@ -518,6 +663,8 @@ class UnifiedUSBApp(tk.Tk):
                         zpl = zpl_laura(filename, url)
                     elif "Setor" in model:
                         zpl = zpl_massari_setor(filename, url, setor)
+                    elif "Evandro" in model:
+                        zpl = zpl_evandro(codigo, descricao, setor)
                     else:
                         zpl = zpl_massari_simples(filename, url)
                     
@@ -534,7 +681,7 @@ class UnifiedUSBApp(tk.Tk):
             else:
                 messagebox.showinfo("Sucesso", "Impressão finalizada.")
 
-        except win32print.error as e:
+        except pywintypes.error as e:
             self._log(f"[ERRO] win32: {e}")
             messagebox.showerror("Erro", f"Erro do Windows ao imprimir:\n{e}")
         except Exception as e:
@@ -628,6 +775,243 @@ class UnifiedUSBApp(tk.Tk):
             except Exception:
                 prn = ""
         return prn or ""
+
+
+# ============== OVERRIDES COM REGISTRO DE MODELOS ==============
+def _build_ui_model_registry(self):
+    top = ttk.Frame(self, padding=10)
+    top.pack(fill="x")
+
+    # Modelo
+    ttk.Label(top, text="Finalidade / Modelo:").grid(row=0, column=0, sticky="w")
+    model_labels = list(MODEL_CONFIGS.keys())
+    default_label = model_labels[0] if model_labels else ""
+    self.model_var = tk.StringVar(value=default_label)
+    self.model_combo = ttk.Combobox(
+        top,
+        textvariable=self.model_var,
+        state="readonly",
+        values=model_labels,
+        width=42,
+    )
+    self.model_combo.grid(row=0, column=1, sticky="w", padx=(8, 0))
+    self.model_combo.bind("<<ComboboxSelected>>", self._on_model_change)
+
+    # Quantidade
+    ttk.Label(top, text="Quantidade:").grid(row=0, column=2, sticky="e", padx=(16, 6))
+    self.qtd_var = tk.StringVar(value="1")
+    ttk.Entry(top, textvariable=self.qtd_var, width=10).grid(row=0, column=3, sticky="w")
+
+    controls = ttk.Frame(self, padding=10)
+    controls.pack(fill="x")
+    ttk.Button(controls, text="Cancelar impressǜo (app)", command=self.on_cancel_app).pack(side="left")
+    ttk.Button(controls, text="Parar agora na impressora (~JA)", command=self.on_cancel_printer).pack(side="left", padx=8)
+    ttk.Button(controls, text="Resetar impressora (~JR)", command=self.on_reset_printer).pack(side="left", padx=8)
+    ttk.Button(controls, text="Limpar RAM R: (^IDR:*.*)", command=self.on_clear_ram).pack(side="left", padx=8)
+
+    # Arquivos / Ações
+    mid = ttk.Frame(self, padding=(10, 8, 10, 10))
+    mid.pack(fill="x")
+
+    self.btn_csv = ttk.Button(mid, text="Carregar CSV", command=self.load_csv)
+    self.btn_csv.grid(row=0, column=1, sticky="w", padx=(8, 0))
+
+    self.csv_hint = ttk.Label(mid, text="", foreground="#555")
+    self.csv_hint.grid(row=0, column=3, sticky="w", padx=(12, 0))
+
+    # Tabela CSV
+    table = ttk.Frame(self, padding=(10, 0, 10, 10))
+    table.pack(fill="both", expand=True)
+    self.tree = ttk.Treeview(table, columns=("filename", "url", "setor"), show="headings", height=16)
+    for c, w in (("filename", 260), ("url", 430), ("setor", 160)):
+        self.tree.heading(c, text=c)
+        self.tree.column(c, anchor="w", width=w)
+    vsb = ttk.Scrollbar(table, orient="vertical", command=self.tree.yview)
+    self.tree.configure(yscroll=vsb.set)
+    self.tree.pack(side="left", fill="both", expand=True)
+    vsb.pack(side="right", fill="y")
+
+    # Progresso + Log + Botões
+    bottom = ttk.Frame(self, padding=10)
+    bottom.pack(fill="x")
+    self.progress = ttk.Progressbar(bottom, mode="determinate")
+    self.progress.pack(fill="x", pady=(0, 6))
+    self.log = tk.Text(bottom, height=8, state="disabled")
+    self.log.pack(fill="x")
+
+    actions = ttk.Frame(self, padding=10)
+    actions.pack(fill="x")
+    ttk.Button(actions, text="Imprimir", command=self.on_print).pack(side="left")
+    ttk.Button(actions, text="Imprimir teste (ZPL m��nimo)", command=self.on_test).pack(side="left", padx=8)
+
+    # Estado inicial
+    self._on_model_change()
+
+
+def _on_model_change_model_registry(self, *a):
+    model = self.model_var.get()
+    cfg = MODEL_CONFIGS.get(model)
+    if not cfg:
+        self.mode_requires_csv = True
+        self.csv_hint.config(text="Selecione um modelo vǭlido.")
+        return
+
+    self.mode_requires_csv = bool(cfg.get("requires_csv", False))
+    if not self.mode_requires_csv:
+        self.csv_hint.config(text="Modelo FIXO. Nǜo requer CSV. Quantidade = total.")
+    else:
+        need = cfg.get("required_csv_columns", {"filename", "url"})
+        if "setor" in need:
+            self.csv_hint.config(text="CSV exigido: filename, url, setor. Quantidade = c��pias por linha.")
+        else:
+            self.csv_hint.config(text="CSV exigido: filename, url. Quantidade = c��pias por linha.")
+
+
+def _load_csv_model_registry(self):
+    path = filedialog.askopenfilename(title="Selecione CSV", filetypes=[("CSV", "*.csv"), ("Todos", "*.*")])
+    if not path:
+        return
+    try:
+        df = pd.read_csv(path)
+    except Exception as e:
+        messagebox.showerror("Erro", f"Falha ao ler CSV:\n{e}")
+        return
+
+    model = self.model_var.get()
+    cfg = MODEL_CONFIGS.get(model)
+    need = {"filename", "url"}
+    if cfg and cfg.get("requires_csv", False):
+        cols = cfg.get("required_csv_columns", need)
+        if cols:
+            need = set(cols)
+    if not need.issubset(df.columns):
+        messagebox.showerror("Erro", f"CSV deve conter: {', '.join(sorted(need))}.")
+        return
+
+    self.df = df.copy()
+    self._fill_table(self.df)
+    self._log(f"CSV carregado ({len(self.df)} linhas).")
+
+
+def _do_print_model_registry(self, printer: str, model: str, qtd: int):
+    self.progress["value"] = 0
+    self.btn_state(False)
+    self.stop_event.clear()
+    try:
+        cfg = MODEL_CONFIGS.get(model)
+        if not cfg:
+            self._log(f"[ERRO] Modelo desconhecido: {model}")
+            messagebox.showerror("Erro", f"Modelo desconhecido: {model}")
+            return
+
+        requires_csv = bool(cfg.get("requires_csv", False))
+        builder = cfg.get("builder")
+
+        total = qtd if not requires_csv else len(self.df) * qtd
+        self.progress["maximum"] = max(total, 1)
+        done = 0
+
+        def maybe_save(zpl: str):
+            if getattr(self, "save_next_zpl", None) and self.save_next_zpl.get():
+                with open("last_print.zpl", "w", encoding="cp437", errors="replace") as f:
+                    f.write(zpl)
+
+        # Modelo especial: Calibracao teste (processa a lista inteira em lotes de 3)
+        # Identificamos pelo builder, para não depender do texto exato do rótulo.
+        if builder is zpl_calibracao:
+            if builder is None:
+                self._log(f"[ERRO] Builder nǜo configurado para modelo: {model}")
+                messagebox.showerror("Erro", f"Builder nǜo configurado para modelo: {model}")
+                return
+
+            items = self.df.to_dict(orient="records") if self.df is not None else []
+
+            for _ in range(qtd):
+                if self.stop_event.is_set():
+                    break
+
+                zpl = builder(items)
+                time.sleep(0.5)
+
+                maybe_save(zpl)
+                n = send_raw_windows(zpl, printer)
+                done += len(items)
+                self.progress["value"] = done
+                self._log(f"[OK] {model} | {len(items)} etiquetas | bytes={n}")
+
+            if self.stop_event.is_set():
+                messagebox.showinfo("Cancelado", "Impress�oo cancelada pelo usu��rio.")
+            else:
+                messagebox.showinfo("Sucesso", "Impress�oo finalizada.")
+            return
+
+        # Modelos fixos (sem CSV)
+        if not requires_csv:
+            for _ in range(qtd):
+                if self.stop_event.is_set():
+                    break
+                if builder is None:
+                    self._log(f"[ERRO] Builder não configurado para modelo: {model}")
+                    break
+
+                zpl = builder(None)
+                time.sleep(0.5)
+
+                maybe_save(zpl)
+                n = send_raw_windows(zpl, printer)
+                done += 1
+                self.progress["value"] = done
+                self._log(f"[OK] {model} | {n} bytes")
+
+            if self.stop_event.is_set():
+                messagebox.showinfo("Cancelado", "Impressǜo cancelada pelo usuǭrio.")
+            else:
+                messagebox.showinfo("Sucesso", "Impressǜo finalizada.")
+            return
+
+        # Modelos que usam CSV
+        for _, row in self.df.iterrows():
+            if self.stop_event.is_set():
+                break
+
+            filename = str(row.get("filename", ""))
+
+            for _ in range(qtd):
+                if self.stop_event.is_set():
+                    break
+                if builder is None:
+                    self._log(f"[ERRO] Builder não configurado para modelo: {model}")
+                    break
+
+                zpl = builder(row)
+                time.sleep(0.5)
+
+                maybe_save(zpl)
+                n = send_raw_windows(zpl, printer)
+                done += 1
+                self.progress["value"] = done
+                self._log(f"[OK] {model} | {filename} | bytes={n}")
+
+        if self.stop_event.is_set():
+            messagebox.showinfo("Cancelado", "Impressǜo cancelada pelo usuǭrio.")
+        else:
+            messagebox.showinfo("Sucesso", "Impressǜo finalizada.")
+
+    except pywintypes.error as e:
+        self._log(f"[ERRO] win32: {e}")
+        messagebox.showerror("Erro", f"Erro do Windows ao imprimir:\n{e}")
+    except Exception as e:
+        self._log(f"[ERRO] {e}")
+        messagebox.showerror("Erro", f"Falha inesperada:\n{e}")
+    finally:
+        self.btn_state(True)
+
+
+# Aplica os novos métodos à classe principal
+UnifiedUSBApp._build_ui = _build_ui_model_registry
+UnifiedUSBApp._on_model_change = _on_model_change_model_registry
+UnifiedUSBApp.load_csv = _load_csv_model_registry
+UnifiedUSBApp._do_print = _do_print_model_registry
 
 if __name__ == "__main__":
     app = UnifiedUSBApp()

@@ -7,23 +7,26 @@ REDIS_URL = os.getenv("REDIS_URL", "redis://default:AWbmAbD4G2CfZPb3RxwuWQ4RfY7J
 QUEUE_NAME = os.getenv("REDIS_QUEUE", "print-zebra")  # nome da fila
 
 def send_label(printer: str):
-    """Fica escutando a fila no Redis e imprime cada job na impressora indicada."""
     r = redis.from_url(REDIS_URL)
-    print(f"Conectado ao Redis. Aguardando jobs em '{QUEUE_NAME}' ? {printer}")
+    print(f"Conectado ao Redis. Aguardando jobs em '{QUEUE_NAME}' -> {printer}")
 
     while True:
-        # BLPOP bloqueia até chegar um item
         _, raw = r.blpop(QUEUE_NAME)
-        # raw é bytes; pode ser JSON {"zpl": "..."} ou ZPL puro
+        print("[WORKER] Recebi da fila:", raw)
+
         try:
             payload = json.loads(raw)
             zpl = payload.get("zpl", "")
-            if not zpl:
-                print("[AVISO] JSON sem campo 'zpl'. Ignorando.")
-                continue
+            resposta_queue = payload.get("resposta_queue")
+            job_id = payload.get("job_id")
         except Exception:
-            # não é JSON; assume ZPL puro
             zpl = raw.decode("utf-8", errors="replace")
+            resposta_queue = None
+            job_id = None
+
+        if not zpl:
+            print("[AVISO] Job sem ZPL. Ignorando.")
+            continue
 
         try:
             hPrinter = win32print.OpenPrinter(printer)
@@ -33,11 +36,18 @@ def send_label(printer: str):
                 win32print.WritePrinter(hPrinter, zpl.encode("utf-8"))
                 win32print.EndPagePrinter(hPrinter)
                 win32print.EndDocPrinter(hPrinter)
-                print("[OK] Etiqueta enviada para impressão.")
+                print("[WORKER] Impressão OK.")
+                status = "OK"
             finally:
                 win32print.ClosePrinter(hPrinter)
         except Exception as e:
             print("[ERRO] Falha ao imprimir:", e)
+            status = f"ERRO: {e}"
+
+        # --- envia resposta se houver fila de retorno ---
+        if resposta_queue:
+            r.rpush(resposta_queue, json.dumps({"job_id": job_id, "status": status}))
+
 
 if __name__ == "__main__":
     # ajuste o nome exato da sua impressora (veja em Dispositivos e Impressoras)

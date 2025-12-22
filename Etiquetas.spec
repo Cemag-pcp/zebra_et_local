@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['main.py'],
+    ['tkinter_etiqueta.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -10,7 +10,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['tensorflow', 'tensorflow_intel', 'tensorboard', 'tensorflow_io_gcs_filesystem', 'keras', 'absl'],
     noarchive=False,
     optimize=0,
 )
@@ -26,7 +26,7 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
