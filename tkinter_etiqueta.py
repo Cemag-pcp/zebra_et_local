@@ -274,7 +274,7 @@ def zpl_evandro_almox_qualidade(codigo: str, descricao: str) -> str:
 
 ^FX Coluna PCP (esquerda)
 ^FO50,140^A0N,36,36^FB350,1,0,C,0^FDALMOXARIFADO^FS
-^FO60,210^A0N,30,30^FDNF:_____________   QTD:___^FS
+^FO60,210^A0N,30,30^FDNF:___________   QTD:___^FS
 ^FO60,250^A0N,30,30^FDData (Receb.): ___/___/___^FS
 ^FO60,290^A0N,30,30^FDInspeção:^FS
 ^FO180,290^A0N,30,30^FDSim^FS
