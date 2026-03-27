@@ -296,6 +296,27 @@ def zpl_evandro_almox_qualidade(codigo: str, descricao: str) -> str:
 
 """
 
+def zpl_evandro_v2(codigo: str, descricao: str, quantidade: str) -> str:
+    # Segunda versao baseada no zpl_evandro, com quantidade exibida
+    return f"""^XA
+
+^CI28
+^PW800
+^LL320
+^LT0
+^LH0,0
+^FO250,1^GFA,3800,3800,38,,::::::::::iP01F8,iP03FE,iP0607,iP0C03,iO018F18,iO01898C,iO018B0C,iO018F0C,iO018B0C,L03IFL03IF8N03FFI03FFCN03IFQ07FFEI01I9C,K03KFJ01KFM01IFE00JF8L03KFO07JFEI0C998,K0LFCI07KFEL07JF83JFEL0LFCM01LF800E03,J03MF003MF8J01KFC7KFK03MFM07LFE0070E,J0NFC07MFCJ03RF8J0NFCK01NF801FC,I01NFE1OFJ07RFCI01NFEK03NFC,I03OF3OF8I0SFEI03OF8J07NFE,I0OFE7OFC001TFI07OFCJ0PF8,001OFCPFE003TF800PFEI01PFC,001OF9QF003TF801QFI07PFE,003JF807FF3JFE07JF807IF8KFC3IFC03JFC07JFI07JF00JFE,007IFCI0FE7IFEI0JFC07FFE01JF00IFC07IFCI0JF800JF8001JF,00JFJ03C7IF8I03IFC0IF800IFE007FFC0JFJ03IFC01IFEJ07IF8,00IFCK08IFEK0IFE0IF8007FFC003FFE0IFCK0IFE01IF8J01IF8,01IF8L0IFCK07IF0IFI07FFC001FFE1IF8K07FFE03IFL0IFC,01IFL01IF8K03IF0IFI03FFC001FFE1IFL03IF03FFEL07FFC,03FFEL01IFL01IF8IFI03FFC001FFE3FFEL01IF07FFCL03FFE,03FFEL03FFEM0IF8IFI03FFC001FFE3FFEM0IF07FFCL01FFE,03FFCL03FFEM07FF8IFI03FFC001FFE7FFCM0IF8IF8L01IF,07FF8L03FFCM07FF8IFI03FFC001FFE7FF8M07FF8IFN0IF,07FF8L07SFCIFI03FFC001FFE7FF8M07FF8IFN0IF,07FF8L07SFCIFI03FFC001FFE7FF8M03FF8IFN07FF,07FFM07SFCIFI03FFC001FFE7FFN03FFCFFEN07FF8,:07FFM07SFCIFI03FFC001FFEIFN03FFDFFEN07FF8,:0IFM07SFCIFI03FFC001FFEIFN03FFDFFEN07FF8,07FFM07SFCIFI03FFC001FFE7FFN03FFCFFEN07FF8,:07FFM07SFCIFI03FFC001FFE7FF8M03FFCIFN07FF8,07FF8L07SFCIFI03FFC001FFE7FF8M07FFCIFN0IF8,07FF8L07FFCQ0IFI03FFC001FFE7FF8M07FFCIFN0IF8,07FFCL03FFCQ0IFI03FFC001FFE7FFCM0IFCIF8L01IF8,03FFCL03FFEQ0IFI03FFC001FFE3FFCM0IFC7FF8L01IF8,03FFEL03IFQ0IFI03FFC001FFE3FFEL01IFC7FFCL03IF8,01IFL01IF8P0IFI03FFC001FFE3IFL03IFC3FFEL07IF8,01IF8K01IFCP0IFI03FFC001FFE1IF8K07IFC3IFL0JF8,00IFCK08IFEK0EJ0IFI03FFC001FFE0IFCK0JFC1IF8J01JF8,00JFJ03CJFJ01F8I0IFI03FFC001FFE0JFJ03JFC1IFEJ07JF8,007IFCI07E7IFCI07FCI0IFI03FFC001FFE07IFCI07JFC0JF8I0KF8,003JF803FF3JFC03FFEI0IFI03FFC001FFE03JF003KFC07IFE007KF8,003OF9PFI0IFI03FFC001FFE03RFC07RF8,001OFCPF800IFI03FFC001FFE01RFC03RF8,I0OFE7OFC00IFI03FFC001FFE00RFC01RF8,I07OF3OF800IFI03FFC001FFE007QFC00RF8,I01NFE1OFI0IFI03FFC001FFE001QFC003QF8,J0NFC0NFEI0IFI03FFC001FFEI0QFC001QF8,J03MF003MF8I0IFI03FFC001FFEI03MF3FFCI07LFE7FF8,K0LFEI0LFEJ0IFI03FFC001FFEJ0LFE3FFCI01LFC7FF8,K03KFJ03KF8J0IFI03FFC001FFEJ03KF03FFCJ07JFE07FF8,L07IF8K07IFCK0IFI03FFC001FFEK07IF803FFCK0JF007FF,N02N02EM0402I01018I080CL033I01008L02J0IF,iN0IF,:iM01IF,hY01CL03FFE,hY07EL07FFE,hX01FFL07FFC,hX07FF8J01IFC,hX0IFCJ03IF8,hX0JFJ0JF8,hX0JFE003JF,hX07PFE,hX03PFC,hX01PF8,hY0PF,hY07NFE,hY01NF8,i0NF,i03LFC,iG0LF,iG01JF8,iH03FFC,,::::::^FS
+
+
+^FX Codigo da peca e descricao
+^FO180,130
+^A0N,48,48
+^FB500,3,0,L,0
+^FD{codigo} - {descricao}^FS
+
+^XZ
+"""
+
 def zpl_calibracao(items: list) -> str:
     final_zpl = ""
     offsets = [60, 320, 570]
@@ -393,6 +414,16 @@ MODEL_CONFIGS = {
         "builder": lambda row: zpl_evandro_almox_qualidade(
             str(row.get("codigo", "")) if row is not None else "",
             str(row.get("descricao", "")) if row is not None else "",
+        ),
+    },
+    "Evandro v2 -> codigo | descricao | quantidade": {
+        "requires_csv": True,
+        "required_csv_columns": {"codigo", "descricao", "quantidade"},
+        "copies_column": "quantidade",
+        "builder": lambda row: zpl_evandro_v2(
+            str(row.get("codigo", "")) if row is not None else "",
+            str(row.get("descricao", "")) if row is not None else "",
+            str(row.get("quantidade", "")) if row is not None else "",
         ),
     },
     "Calibracao teste -> rq | tag | data": {
@@ -1012,6 +1043,177 @@ UnifiedUSBApp._build_ui = _build_ui_model_registry
 UnifiedUSBApp._on_model_change = _on_model_change_model_registry
 UnifiedUSBApp.load_csv = _load_csv_model_registry
 UnifiedUSBApp._do_print = _do_print_model_registry
+
+def _on_model_change_model_registry_v2(self, *a):
+    model = self.model_var.get()
+    cfg = MODEL_CONFIGS.get(model)
+    if not cfg:
+        self.mode_requires_csv = True
+        self.csv_hint.config(text="Selecione um modelo valido.")
+        return
+
+    self.mode_requires_csv = bool(cfg.get("requires_csv", False))
+    if not self.mode_requires_csv:
+        self.csv_hint.config(text="Modelo fixo. Nao requer CSV. Quantidade = total.")
+        return
+
+    need = cfg.get("required_csv_columns", {"filename", "url"})
+    copies_column = cfg.get("copies_column")
+    columns_text = ", ".join(sorted(need))
+    if copies_column:
+        self.csv_hint.config(text=f"CSV exigido: {columns_text}. Quantidade = coluna '{copies_column}' do CSV.")
+    else:
+        self.csv_hint.config(text=f"CSV exigido: {columns_text}. Quantidade = copias por linha.")
+
+
+def _fill_table_model_registry_v2(self, df: pd.DataFrame):
+    for item in self.tree.get_children():
+        self.tree.delete(item)
+
+    if df is None:
+        return
+
+    columns = list(df.columns)
+    if not columns:
+        columns = ["coluna"]
+
+    self.tree["columns"] = columns
+    for col in columns:
+        self.tree.heading(col, text=col)
+        width = 140 if len(col) <= 12 else 220
+        self.tree.column(col, anchor="w", width=width)
+
+    for _, row in df.iterrows():
+        self.tree.insert("", "end", values=[row.get(col, "") for col in columns])
+
+
+def _do_print_model_registry_v2(self, printer: str, model: str, qtd: int):
+    self.progress["value"] = 0
+    self.btn_state(False)
+    self.stop_event.clear()
+    try:
+        cfg = MODEL_CONFIGS.get(model)
+        if not cfg:
+            self._log(f"[ERRO] Modelo desconhecido: {model}")
+            messagebox.showerror("Erro", f"Modelo desconhecido: {model}")
+            return
+
+        requires_csv = bool(cfg.get("requires_csv", False))
+        builder = cfg.get("builder")
+        copies_column = cfg.get("copies_column")
+
+        total = qtd
+        if requires_csv:
+            if copies_column:
+                total = 0
+                for _, row in self.df.iterrows():
+                    try:
+                        row_copies = int(str(row.get(copies_column, 0)).strip() or "0")
+                    except Exception:
+                        row_copies = 0
+                    total += max(row_copies, 0) * qtd
+            else:
+                total = len(self.df) * qtd
+
+        self.progress["maximum"] = max(total, 1)
+        done = 0
+
+        def maybe_save(zpl: str):
+            if getattr(self, "save_next_zpl", None) and self.save_next_zpl.get():
+                with open("last_print.zpl", "w", encoding="cp437", errors="replace") as f:
+                    f.write(zpl)
+
+        if builder is zpl_calibracao:
+            items = self.df.to_dict(orient="records") if self.df is not None else []
+
+            for _ in range(qtd):
+                if self.stop_event.is_set():
+                    break
+
+                zpl = builder(items)
+                time.sleep(0.5)
+
+                maybe_save(zpl)
+                n = send_raw_windows(zpl, printer)
+                done += len(items)
+                self.progress["value"] = done
+                self._log(f"[OK] {model} | {len(items)} etiquetas | bytes={n}")
+
+            if self.stop_event.is_set():
+                messagebox.showinfo("Cancelado", "Impressao cancelada pelo usuario.")
+            else:
+                messagebox.showinfo("Sucesso", "Impressao finalizada.")
+            return
+
+        if not requires_csv:
+            for _ in range(qtd):
+                if self.stop_event.is_set():
+                    break
+                if builder is None:
+                    self._log(f"[ERRO] Builder nao configurado para modelo: {model}")
+                    break
+
+                zpl = builder(None)
+                time.sleep(0.5)
+
+                maybe_save(zpl)
+                n = send_raw_windows(zpl, printer)
+                done += 1
+                self.progress["value"] = done
+                self._log(f"[OK] {model} | {n} bytes")
+
+            if self.stop_event.is_set():
+                messagebox.showinfo("Cancelado", "Impressao cancelada pelo usuario.")
+            else:
+                messagebox.showinfo("Sucesso", "Impressao finalizada.")
+            return
+
+        for _, row in self.df.iterrows():
+            if self.stop_event.is_set():
+                break
+
+            row_label = str(row.get("filename", "")) or str(row.get("codigo", "")) or "<sem identificacao>"
+            copies = qtd
+            if copies_column:
+                try:
+                    copies = int(str(row.get(copies_column, 0)).strip() or "0") * qtd
+                except Exception:
+                    copies = 0
+
+            for _ in range(max(copies, 0)):
+                if self.stop_event.is_set():
+                    break
+                if builder is None:
+                    self._log(f"[ERRO] Builder nao configurado para modelo: {model}")
+                    break
+
+                zpl = builder(row)
+                time.sleep(0.5)
+
+                maybe_save(zpl)
+                n = send_raw_windows(zpl, printer)
+                done += 1
+                self.progress["value"] = done
+                self._log(f"[OK] {model} | {row_label} | bytes={n}")
+
+        if self.stop_event.is_set():
+            messagebox.showinfo("Cancelado", "Impressao cancelada pelo usuario.")
+        else:
+            messagebox.showinfo("Sucesso", "Impressao finalizada.")
+
+    except pywintypes.error as e:
+        self._log(f"[ERRO] win32: {e}")
+        messagebox.showerror("Erro", f"Erro do Windows ao imprimir:\n{e}")
+    except Exception as e:
+        self._log(f"[ERRO] {e}")
+        messagebox.showerror("Erro", f"Falha inesperada:\n{e}")
+    finally:
+        self.btn_state(True)
+
+
+UnifiedUSBApp._on_model_change = _on_model_change_model_registry_v2
+UnifiedUSBApp._fill_table = _fill_table_model_registry_v2
+UnifiedUSBApp._do_print = _do_print_model_registry_v2
 
 if __name__ == "__main__":
     app = UnifiedUSBApp()
