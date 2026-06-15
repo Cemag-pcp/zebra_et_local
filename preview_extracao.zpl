@@ -1,0 +1,16 @@
+^XA
+^CI28
+^PW800
+^LL370
+^LT0
+^LH0,0
+
+^FO30,15^A0N,36,36^FB740,2,0,L,0^FDCarreta: Carreta SR-BA12345-XYZ Modelo Graneleiro^FS
+
+^FO30,110^A0N,36,36^FB740,1,0,L,0^FDN. Serie: SN-000123^FS
+
+^FO30,185^A0N,36,36^FB740,2,0,L,0^FDCliente: Cliente Exemplo LTDA^FS
+
+^FO30,280^A0N,36,36^FB740,1,0,L,0^FDCidade: Sao Paulo - SP^FS
+
+^XZ

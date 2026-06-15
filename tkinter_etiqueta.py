@@ -317,6 +317,62 @@ def zpl_evandro_v2(codigo: str, descricao: str, quantidade: str) -> str:
 ^XZ
 """
 
+def zpl_recebimento(cliente: str, carreta: str, cidade: str, n_serie: str, cor: str) -> str:
+    # Etiqueta de recebimento -> cliente | carreta | cidade | n_serie | cor
+    # Coluna esquerda: Carreta, N. Serie, Cor, Assinatura (com linha)
+    # Coluna direita: Cliente, Cidade, Conferido (checkbox)
+    return f"""^XA
+^CI28
+^PW800
+^LL400
+^LT0
+^LH0,0
+
+^FX Carreta (linha unica em destaque, largura total)
+^FO20,15^A0N,40,40^FB760,2,0,L,0^FDCarreta: {carreta}^FS
+
+^FX Linha divisoria horizontal
+^FO20,110^GB760,2,2^FS
+
+^FX Linha divisoria vertical
+^FO400,125^GB2,255,2^FS
+
+^FX Coluna esquerda
+^FO30,130^A0N,32,32^FB350,2,0,L,0^FDN. Serie: {n_serie}^FS
+^FO30,225^A0N,32,32^FB350,2,0,L,0^FDCor: {cor}^FS
+^FO30,295^A0N,32,32^FB350,1,0,L,0^FDAssinatura:^FS
+^FO30,370^GB350,2,2^FS
+
+^FX Coluna direita
+^FO430,130^A0N,32,32^FB350,2,0,L,0^FDCliente: {cliente}^FS
+^FO430,225^A0N,32,32^FB350,2,0,L,0^FDCidade: {cidade}^FS
+^FO430,320^A0N,32,32^FDConferido:^FS
+^FO660,320^GB40,40,3^FS
+
+^XZ
+"""
+
+def zpl_extracao(carreta: str, n_serie: str, cliente: str, cidade: str) -> str:
+    # Etiqueta de extracao -> carreta | n_serie | cliente | cidade
+    # Layout em coluna unica, um campo abaixo do outro
+    return f"""^XA
+^CI28
+^PW800
+^LL370
+^LT0
+^LH0,0
+
+^FO30,15^A0N,36,36^FB740,2,0,L,0^FDCarreta: {carreta}^FS
+
+^FO30,110^A0N,36,36^FB740,1,0,L,0^FDN. Serie: {n_serie}^FS
+
+^FO30,185^A0N,36,36^FB740,2,0,L,0^FDCliente: {cliente}^FS
+
+^FO30,280^A0N,36,36^FB740,1,0,L,0^FDCidade: {cidade}^FS
+
+^XZ
+"""
+
 def zpl_calibracao(items: list) -> str:
     final_zpl = ""
     offsets = [60, 320, 570]
@@ -424,6 +480,27 @@ MODEL_CONFIGS = {
             str(row.get("codigo", "")) if row is not None else "",
             str(row.get("descricao", "")) if row is not None else "",
             str(row.get("quantidade", "")) if row is not None else "",
+        ),
+    },
+    "Recebimento -> cliente | carreta | cidade | n_serie | cor": {
+        "requires_csv": True,
+        "required_csv_columns": {"cliente", "carreta", "cidade", "n_serie", "cor"},
+        "builder": lambda row: zpl_recebimento(
+            str(row.get("cliente", "")) if row is not None else "",
+            str(row.get("carreta", "")) if row is not None else "",
+            str(row.get("cidade", "")) if row is not None else "",
+            str(row.get("n_serie", "")) if row is not None else "",
+            str(row.get("cor", "")) if row is not None else "",
+        ),
+    },
+    "Extracao -> carreta | n_serie | cliente | cidade": {
+        "requires_csv": True,
+        "required_csv_columns": {"carreta", "n_serie", "cliente", "cidade"},
+        "builder": lambda row: zpl_extracao(
+            str(row.get("carreta", "")) if row is not None else "",
+            str(row.get("n_serie", "")) if row is not None else "",
+            str(row.get("cliente", "")) if row is not None else "",
+            str(row.get("cidade", "")) if row is not None else "",
         ),
     },
     "Calibracao teste -> rq | tag | data": {
