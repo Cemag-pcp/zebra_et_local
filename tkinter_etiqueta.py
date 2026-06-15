@@ -320,7 +320,7 @@ def zpl_evandro_v2(codigo: str, descricao: str, quantidade: str) -> str:
 def zpl_recebimento(cliente: str, carreta: str, cidade: str, n_serie: str, cor: str) -> str:
     # Etiqueta de recebimento -> cliente | carreta | cidade | n_serie | cor
     # Coluna esquerda: Carreta, N. Serie, Cor, Assinatura (com linha)
-    # Coluna direita: Cliente, Cidade, Conferido (checkbox)
+    # Coluna direita: Cliente, Cidade, Conferido (linha para assinatura)
     return f"""^XA
 ^CI28
 ^PW800
@@ -346,8 +346,8 @@ def zpl_recebimento(cliente: str, carreta: str, cidade: str, n_serie: str, cor: 
 ^FX Coluna direita
 ^FO430,110^A0N,28,28^FB350,2,0,L,0^FDCliente: {cliente}^FS
 ^FO430,185^A0N,28,28^FB350,2,0,L,0^FDCidade: {cidade}^FS
-^FO430,262^A0N,28,28^FDConferido:^FS
-^FO660,260^GB35,35,3^FS
+^FO430,262^A0N,28,28^FB350,1,0,L,0^FDConferido:^FS
+^FO430,300^GB350,2,2^FS
 
 ^XZ
 """
