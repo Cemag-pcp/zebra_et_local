@@ -324,30 +324,30 @@ def zpl_recebimento(cliente: str, carreta: str, cidade: str, n_serie: str, cor: 
     return f"""^XA
 ^CI28
 ^PW800
-^LL400
+^LL320
 ^LT0
 ^LH0,0
 
 ^FX Carreta (linha unica em destaque, largura total)
-^FO20,15^A0N,40,40^FB760,2,0,L,0^FDCarreta: {carreta}^FS
+^FO20,10^A0N,36,36^FB760,2,0,L,0^FDCarreta: {carreta}^FS
 
 ^FX Linha divisoria horizontal
-^FO20,110^GB760,2,2^FS
+^FO20,100^GB760,2,2^FS
 
 ^FX Linha divisoria vertical
-^FO400,125^GB2,255,2^FS
+^FO400,108^GB2,195,2^FS
 
 ^FX Coluna esquerda
-^FO30,130^A0N,32,32^FB350,2,0,L,0^FDN. Serie: {n_serie}^FS
-^FO30,225^A0N,32,32^FB350,2,0,L,0^FDCor: {cor}^FS
-^FO30,295^A0N,32,32^FB350,1,0,L,0^FDAssinatura:^FS
-^FO30,370^GB350,2,2^FS
+^FO30,110^A0N,28,28^FB350,2,0,L,0^FDN. Serie: {n_serie}^FS
+^FO30,185^A0N,28,28^FB350,2,0,L,0^FDCor: {cor}^FS
+^FO30,262^A0N,28,28^FB350,1,0,L,0^FDAssinatura:^FS
+^FO30,300^GB350,2,2^FS
 
 ^FX Coluna direita
-^FO430,130^A0N,32,32^FB350,2,0,L,0^FDCliente: {cliente}^FS
-^FO430,225^A0N,32,32^FB350,2,0,L,0^FDCidade: {cidade}^FS
-^FO430,320^A0N,32,32^FDConferido:^FS
-^FO660,320^GB40,40,3^FS
+^FO430,110^A0N,28,28^FB350,2,0,L,0^FDCliente: {cliente}^FS
+^FO430,185^A0N,28,28^FB350,2,0,L,0^FDCidade: {cidade}^FS
+^FO430,262^A0N,28,28^FDConferido:^FS
+^FO660,260^GB35,35,3^FS
 
 ^XZ
 """
