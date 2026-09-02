@@ -390,7 +390,7 @@ def zpl_extracao_v2(cliente: str, cidade: str, pedido: str, volume: str, peso: s
 ^FO30,175^A0N,36,36^FB740,2,0,L,0^FDPedido: {pedido}^FS
 
 ^FO30,260^A0N,28,28^FB230,1,0,L,0^FDVolume: {volume}^FS
-^FO290,260^A0N,28,28^FB230,1,0,L,0^FDPeso: {peso}^FS
+^FO290,260^A0N,28,28^FB230,1,0,L,0^FDPeso: {peso}kg^FS
 ^FO550,260^A0N,28,28^FB230,1,0,L,0^FDEmb.: {emb}^FS
 
 ^XZ
