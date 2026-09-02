@@ -375,11 +375,11 @@ def zpl_extracao(carreta: str, n_serie: str, cliente: str, cidade: str) -> str:
 
 def zpl_extracao_v2(cliente: str, cidade: str, pedido: str) -> str:
     # Etiqueta de extracao v2 -> cliente | cidade | pedido (CSV)
-    # Volume, Peso e Emb. ficam em branco (linha ___) para preenchimento a caneta
+    # Volume, Peso e Emb. ficam lado a lado, em branco (linha ___) para preenchimento a caneta
     return f"""^XA
 ^CI28
 ^PW800
-^LL480
+^LL320
 ^LT0
 ^LH0,0
 
@@ -389,11 +389,9 @@ def zpl_extracao_v2(cliente: str, cidade: str, pedido: str) -> str:
 
 ^FO30,175^A0N,36,36^FB740,2,0,L,0^FDPedido: {pedido}^FS
 
-^FO30,255^A0N,36,36^FB740,1,0,L,0^FDVolume: ______________________^FS
-
-^FO30,335^A0N,36,36^FB740,1,0,L,0^FDPeso: ______________________^FS
-
-^FO30,415^A0N,36,36^FB740,1,0,L,0^FDEmb.: ______________________^FS
+^FO30,260^A0N,28,28^FB230,1,0,L,0^FDVolume: ______^FS
+^FO290,260^A0N,28,28^FB230,1,0,L,0^FDPeso: ______^FS
+^FO550,260^A0N,28,28^FB230,1,0,L,0^FDEmb.: ______^FS
 
 ^XZ
 """
