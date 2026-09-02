@@ -373,9 +373,9 @@ def zpl_extracao(carreta: str, n_serie: str, cliente: str, cidade: str) -> str:
 ^XZ
 """
 
-def zpl_extracao_v2(cliente: str, cidade: str, pedido: str) -> str:
-    # Etiqueta de extracao v2 -> cliente | cidade | pedido (CSV)
-    # Volume, Peso e Emb. ficam lado a lado, em branco (linha ___) para preenchimento a caneta
+def zpl_extracao_v2(cliente: str, cidade: str, pedido: str, volume: str, peso: str, emb: str) -> str:
+    # Etiqueta de extracao v2 -> cliente | cidade | pedido | volume | peso | emb (todos do CSV)
+    # Volume, Peso e Emb. ficam lado a lado
     return f"""^XA
 ^CI28
 ^PW800
@@ -389,9 +389,9 @@ def zpl_extracao_v2(cliente: str, cidade: str, pedido: str) -> str:
 
 ^FO30,175^A0N,36,36^FB740,2,0,L,0^FDPedido: {pedido}^FS
 
-^FO30,260^A0N,28,28^FB230,1,0,L,0^FDVolume: ______^FS
-^FO290,260^A0N,28,28^FB230,1,0,L,0^FDPeso: ______^FS
-^FO550,260^A0N,28,28^FB230,1,0,L,0^FDEmb.: ______^FS
+^FO30,260^A0N,28,28^FB230,1,0,L,0^FDVolume: {volume}^FS
+^FO290,260^A0N,28,28^FB230,1,0,L,0^FDPeso: {peso}^FS
+^FO550,260^A0N,28,28^FB230,1,0,L,0^FDEmb.: {emb}^FS
 
 ^XZ
 """
@@ -526,13 +526,16 @@ MODEL_CONFIGS = {
             str(row.get("cidade", "")) if row is not None else "",
         ),
     },
-    "Extracao v2 -> cliente | cidade | pedido (Volume/Peso/Emb. manual)": {
+    "Extracao v2 -> cliente | cidade | pedido | volume | peso | emb": {
         "requires_csv": True,
-        "required_csv_columns": {"Cliente", "Cidade", "Pedido"},
+        "required_csv_columns": {"Cliente", "Cidade", "Pedido", "Volume", "Peso", "Emb"},
         "builder": lambda row: zpl_extracao_v2(
             str(row.get("Cliente", "")) if row is not None else "",
             str(row.get("Cidade", "")) if row is not None else "",
             str(row.get("Pedido", "")) if row is not None else "",
+            str(row.get("Volume", "")) if row is not None else "",
+            str(row.get("Peso", "")) if row is not None else "",
+            str(row.get("Emb", "")) if row is not None else "",
         ),
     },
     "Calibracao teste -> rq | tag | data": {
