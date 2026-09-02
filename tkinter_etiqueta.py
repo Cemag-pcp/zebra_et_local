@@ -373,6 +373,31 @@ def zpl_extracao(carreta: str, n_serie: str, cliente: str, cidade: str) -> str:
 ^XZ
 """
 
+def zpl_extracao_v2(cliente: str, cidade: str, pedido: str) -> str:
+    # Etiqueta de extracao v2 -> cliente | cidade | pedido (CSV)
+    # Volume, Peso e Emb. ficam em branco (linha ___) para preenchimento a caneta
+    return f"""^XA
+^CI28
+^PW800
+^LL480
+^LT0
+^LH0,0
+
+^FO30,15^A0N,36,36^FB740,2,0,L,0^FDCliente: {cliente}^FS
+
+^FO30,95^A0N,36,36^FB740,1,0,L,0^FDCidade: {cidade}^FS
+
+^FO30,175^A0N,36,36^FB740,2,0,L,0^FDPedido: {pedido}^FS
+
+^FO30,255^A0N,36,36^FB740,1,0,L,0^FDVolume: ______________________^FS
+
+^FO30,335^A0N,36,36^FB740,1,0,L,0^FDPeso: ______________________^FS
+
+^FO30,415^A0N,36,36^FB740,1,0,L,0^FDEmb.: ______________________^FS
+
+^XZ
+"""
+
 def zpl_calibracao(items: list) -> str:
     final_zpl = ""
     offsets = [60, 320, 570]
@@ -501,6 +526,15 @@ MODEL_CONFIGS = {
             str(row.get("n_serie", "")) if row is not None else "",
             str(row.get("cliente", "")) if row is not None else "",
             str(row.get("cidade", "")) if row is not None else "",
+        ),
+    },
+    "Extracao v2 -> cliente | cidade | pedido (Volume/Peso/Emb. manual)": {
+        "requires_csv": True,
+        "required_csv_columns": {"Cliente", "Cidade", "Pedido"},
+        "builder": lambda row: zpl_extracao_v2(
+            str(row.get("Cliente", "")) if row is not None else "",
+            str(row.get("Cidade", "")) if row is not None else "",
+            str(row.get("Pedido", "")) if row is not None else "",
         ),
     },
     "Calibracao teste -> rq | tag | data": {
